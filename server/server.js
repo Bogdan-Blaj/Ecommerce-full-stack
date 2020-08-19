@@ -41,6 +41,33 @@ app.post('/api/users/register', (req, res) => {
     });
 })
 
+app.post('/api/users/login', (req, res) => {
+
+    //find the email for the user
+    User.findOne({'email' : req.body.email} , (err, user) =>{
+        if(!user)
+            return res.json({loginSuccess : false, message : 'Authentication failed, email not found'});
+
+        //check the password
+        user.comparePassword(req.body.password, (error, isMatch) => {
+            if(!isMatch)
+                return res.json({loginSuccess : false, message : 'Wrong password'});
+
+            //generate token
+            user.generateToken((err, user) => {
+                if(err)
+                    return res.status(400).send(err);
+                
+                //store token as a cookie
+                res.cookie('w_auth', user.token).status(200).json({
+                        loginSuccess : true
+                })
+            })
+            
+        })
+    })
+})
+
 
 //========================================
 //                  SERVER
