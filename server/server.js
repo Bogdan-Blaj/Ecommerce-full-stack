@@ -18,6 +18,14 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+
+//Start Listening
+const port = process.env.PORT || 3002;
+
+app.listen(port, () => {
+    console.log(`Server Running at ${port}`)
+})
+
 //========================================
 //                  MODELS
 //========================================
@@ -25,8 +33,23 @@ const { User } = require('./models/user');
 
 
 //========================================
+//              MIDDLEWARES
+//========================================
+const { auth } = require('./middleware/auth');
+
+
+
+
+//========================================
 //                  USERS
 //========================================
+
+app.get('/api/users/auth', auth, (req, res) => {
+    res.status(200).json({
+        user: req.user
+    })
+})
+
 app.post('/api/users/register', (req, res) => {
     //create new User
     const user = new User(req.body);
@@ -68,15 +91,4 @@ app.post('/api/users/login', (req, res) => {
             
         })
     })
-})
-
-
-//========================================
-//                  SERVER
-//========================================
-//create env variable
-const port = process.env.PORT || 3002;
-
-app.listen(port, () => {
-    console.log(`Server Running at ${port}`)
 })
