@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        uniqure: 1
+        unique: 1
     },
     password : {
         type: String,
@@ -69,6 +69,9 @@ userSchema.pre('save', function(next){
     }
 })
 
+//========================================
+//            User Login
+//========================================
 userSchema.methods.comparePassword = function (candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function(error, isMatch){
         if(error)
@@ -80,16 +83,16 @@ userSchema.methods.comparePassword = function (candidatePassword, cb) {
 
 userSchema.methods.generateToken = function (cb) {
     var user = this;
-    var token = jwt.sign(user._id.toHexString(), process.env.SECRET);
+    var token = jwt.sign(user._id.toHexString(),process.env.SECRET)
 
     user.token = token;
+    console.log('generateToken', user.token);
+    user.markModified('anything');
 
-    //save token
-    user.save(function(err, user){
+    User.updateOne({_id: user._id}, user, function(err, numberAffected, rawResponse){
         if(err)
             return cb(err);
-
-        cb(null, user)
+        cb(null, user);
     })
 }
 

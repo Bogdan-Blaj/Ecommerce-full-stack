@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 mongoose.Promise = global.Promise;
+mongoose.set('useCreateIndex', true);
 mongoose.connect(process.env.DATABASE, { useUnifiedTopology: true, useNewUrlParser: true })
 
 app.use(bodyParser.urlencoded({extended:true}));
@@ -55,6 +56,7 @@ app.post('/api/users/login', (req, res) => {
 
             //generate token
             user.generateToken((err, user) => {
+                console.log('generateToken', err, user);
                 if(err)
                     return res.status(400).send(err);
                 
