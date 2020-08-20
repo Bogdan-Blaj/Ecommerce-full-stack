@@ -89,7 +89,7 @@ userSchema.methods.generateToken = function (cb) {
     console.log('generateToken', user.token);
     user.markModified('anything');
 
-    User.updateOne({_id: user._id}, user, function(err, numberAffected, rawResponse){
+    User.updateOne({_id: user._id}, { $set: { token: token } }, function(err){
         if(err)
             return cb(err);
         cb(null, user);
