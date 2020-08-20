@@ -12,7 +12,11 @@ require('dotenv').config();
 
 mongoose.Promise = global.Promise;
 mongoose.set('useCreateIndex', true);
-mongoose.connect(process.env.DATABASE, { useUnifiedTopology: true, useNewUrlParser: true })
+mongoose.connect(process.env.DATABASE, { 
+    useUnifiedTopology: true, 
+    useNewUrlParser: true,
+    useFindAndModify: false
+});
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
@@ -97,4 +101,24 @@ app.post('/api/users/login', (req, res) => {
             
         })
     })
+})
+
+app.get('/api/user/logout', auth, (req, res) => {
+    
+    //update user record
+    User.findOneAndUpdate(
+        { _id : req.user._id},
+        { token : ''},
+        (err, doc) => {
+            if(err)
+                return res.json({
+                    success: false, 
+                    err
+                });
+            
+            return res.status(200).send({
+                success : true
+            });
+        }
+    )
 })
