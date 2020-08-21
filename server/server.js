@@ -48,6 +48,59 @@ const { admin } = require('./middleware/admin');
 //========================================
 //                PRODUCTS
 //========================================
+
+//By Arrival + Sort
+// /articles?sortBy=createdAt&order=desc&limit=100
+
+//BY SELL
+// /articles?sortBy=sold&order=desc&limit=4
+app.get('/api/product/articles', (req,res) => {
+    let order = req.query.order ? req.query.order : 'asc';
+    let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
+    let limit = req.query.limit ? parseInt(req.query.limit) : 100;
+
+    Product.
+    find().
+    populate('brand').
+    populate('wood').
+    sort([[sortBy, order]]).
+    limit(limit).
+    exec((err, articles) => {
+        if(err)
+            return res.status(400).send(err);
+        res.send(articles);
+    })
+});
+
+
+
+// /api/product/article?id=something,somethingElse&type=single
+app.get('/api/product/articles_by_id', (req,res) => {
+    // check if type is array or single (we are searching for 1 or more products)
+    //this can be used because we are using bodyParser and have urlencoded
+    let type = req.query.type;
+    let items = req.query.id;
+
+    if(type === "array"){
+        //get the ids
+        let ids = req.query.id.split(',');
+        //convert to array
+        items = [];
+        items = ids.map(item => {
+            return mongoose.Types.ObjectId(item)
+        })
+    }
+
+    Product.
+    find({'_id' : {$in : items}}).
+    populate('brand').
+    populate('wood').
+    exec((err, docs) => {
+        return res.status(200).send(docs)
+    })
+});
+
+
 app.post('/api/product/article', auth, admin, (req,res) => {
     const product = new Product(req.body);
 
