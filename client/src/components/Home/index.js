@@ -3,6 +3,8 @@ import HomeSlider from './home_slider';
 import HomePromotion from './home_promotion';
 import { connect } from 'react-redux';
 import {getProductsBySell, getProductsByArrival} from '../../redux/actions/product_actions';
+import CardBlock from '../Utils/card_block';
+
 
 class Home extends Component {
 
@@ -15,7 +17,13 @@ class Home extends Component {
         return (
             <div>
                 <HomeSlider />
+                <CardBlock list = {this.props.products.bySell}
+                            title = "Best Selling guitars"            
+                />
                 <HomePromotion />
+                <CardBlock list = {this.props.products.byArrival}
+                            title = "New arrivals"            
+                />
             </div>
         )
     }
