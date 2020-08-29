@@ -20,7 +20,7 @@ export default function(ComposedClass, reload, adminRoute = null){
             this.props.dispatch(auth()).then(response => {
                 //getting from map state to props
                 let user = this.props.user.userData;
-                 console.log(user + "1");
+                 console.log(user);
                 if(!user.isAuth){
                     if(reload){
                         this.props.history.push('/register_login');
@@ -49,9 +49,7 @@ export default function(ComposedClass, reload, adminRoute = null){
                 )
             }
             return (
-                <div>
-                    <ComposedClass {...this.props} user = { this.props.user} />
-                </div>
+                <ComposedClass {...this.props} user = { this.props.user} />
             );
         }
     }
