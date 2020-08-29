@@ -235,7 +235,7 @@ app.post('/api/users/login', (req, res) => {
     })
 })
 
-app.get('/api/user/logout', auth, (req, res) => {
+app.get('/api/users/logout', auth, (req, res) => {
     
     //update user record
     User.findOneAndUpdate(
