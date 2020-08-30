@@ -28,7 +28,6 @@ class Card extends Component {
                         <div className="name">{props.name}</div>
                         <div className="name">${props.price}</div>
                     </div>
-                </div>
                 { props.grid ?
                     <div className="description">
                         <p>
@@ -59,6 +58,7 @@ class Card extends Component {
                         />
                     </div>
                 </div>
+            </div>
             </div>
         )
     }
