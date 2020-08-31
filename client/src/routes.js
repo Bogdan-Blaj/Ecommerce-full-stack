@@ -7,6 +7,7 @@ import Register from './components/Register_login/register';
 import UserDashboard from './components/User';
 import AuthenticationCheck from './hoc/auth';
 import Shop from './components/shop';
+import AddProduct from './components/User/Admin/add_products';
 
 
 
@@ -16,9 +17,10 @@ const Routes = () => {
                 <Switch>
                     <Route path ="/" exact component = { AuthenticationCheck(Home, null) } />
                     <Route path ="/shop" exact component = { AuthenticationCheck(Shop, null) } />
-                    <Route path ="/user/dashboard" exact component = { AuthenticationCheck(UserDashboard, true) } />
                     <Route path ="/register" exact component = { AuthenticationCheck(Register, false) } />
                     <Route path ="/register_login" exact component = { AuthenticationCheck(RegisterLogin, false) } />
+                    <Route path ="/user/dashboard" exact component = { AuthenticationCheck(UserDashboard, true) } />
+                    <Route path ="/user/add_product" exact component = { AuthenticationCheck(AddProduct, true) } />
                 </Switch>
             </Layout>
         )
