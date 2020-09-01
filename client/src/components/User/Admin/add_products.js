@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import UserLayout from '../../../hoc/userLayout';
 
 import FormField from '../../Utils/Form/formField';
-import { update, generateData, isFormValid, populateOptionFields } from '../../Utils/Form/formActions';
+import { update, generateData, isFormValid, populateOptionFields, resetFields } from '../../Utils/Form/formActions';
 import { connect } from 'react-redux';
-import {getBrands, getWoods} from '../../../redux/actions/product_actions';
+import {getBrands, getWoods, addProduct, clearProduct} from '../../../redux/actions/product_actions';
 
 
 class AddProduct extends Component {
@@ -12,7 +12,7 @@ class AddProduct extends Component {
     state = {
         formError:false,
         formSuccess:false,
-        formdata:{
+        formData:{
             name: {
                 element: 'input',
                 value: '',
@@ -178,27 +178,72 @@ class AddProduct extends Component {
     }
 
 
-    updateFields = (newFormData) => {
+    updateFields = (newformData) => {
         this.setState({
-            formdata : newFormData
+            formData : newformData
         })
     }
 
+
+    updateForm = (element) => {
+        const newformData = update(element, this.state.formData, 'products');
+        this.setState({
+            formError : false,
+            formData : newformData
+        })
+    }
+
+    resetFieldHandler = () => {
+        const newFormData = resetFields(this.state.formdata,'products');
+
+        this.setState({
+            formdata: newFormData,
+            formSuccess:true
+        });
+        setTimeout(()=>{
+            this.setState({
+                formSuccess: false
+            },()=>{
+                this.props.dispatch(clearProduct())
+            })
+        },3000)
+    }
+
+    submitForm = (event) => {
+        event.preventDefault();
+
+        let dataToSubmit = generateData(this.state.formData, 'products');
+        let formIsValid = isFormValid(this.state.formData, 'products');
+        if(formIsValid){
+            this.props.dispatch(addProduct(dataToSubmit)).then(()=>{
+                if( this.props.products.addProduct.success){
+                    this.resetFieldHandler();
+                }else{
+                    this.setState({formError: true})
+                }
+            })
+        } else {
+            this.setState({
+                formError : true
+            })
+        }
+    }
+
     componentDidMount(){
-        const formdata = this.state.formdata;
+        const formData = this.state.formData;
 
         this.props.dispatch(getBrands()).then( response => {
             //add data to the state
             //add the data from redux regarding id and name to the item to the brand options, look in state for the options array in the brand object
-            const newFormData = populateOptionFields(formdata, this.props.products.brands, 'brand');
+            const newformData = populateOptionFields(formData, this.props.products.brands, 'brand');
 
             //update the fields
-            this.updateFields(newFormData);
+            this.updateFields(newformData);
         });
 
         this.props.dispatch(getWoods()).then( response => {
-            const newFormData = populateOptionFields(formdata, this.props.products.woods, 'wood');
-            this.updateFields(newFormData);
+            const newformData = populateOptionFields(formData, this.props.products.woods, 'wood');
+            this.updateFields(newformData);
         });
 
     }
@@ -209,26 +254,26 @@ class AddProduct extends Component {
                 <div>
                     <h1>Add product</h1>
                         <form onSubmit={(event)=> this.submitForm(event)}>
-                            <FormField id = {'name'} formData = { this.state.formdata.name} change = { (element => this.updateForm(element)) } 
+                            <FormField id = {'name'} formData = { this.state.formData.name} change = { (element => this.updateForm(element)) } 
                             />
-                            <FormField id = {'description'} formData = { this.state.formdata.description} change = { (element => this.updateForm(element)) } 
+                            <FormField id = {'description'} formData = { this.state.formData.description} change = { (element => this.updateForm(element)) } 
                             />
-                            <FormField id = {'price'} formData = { this.state.formdata.price} change = { (element => this.updateForm(element)) } 
-                            />
-                        <div className="form_divider">  </div>
-                            <FormField id = {'brand'} formData = { this.state.formdata.brand} change = { (element => this.updateForm(element)) } 
-                            />
-                            <FormField id = {'shipping'} formData = { this.state.formdata.shipping} change = { (element => this.updateForm(element)) } 
-                            />
-                            <FormField id = {'available'} formData = { this.state.formdata.available} change = { (element => this.updateForm(element)) } 
+                            <FormField id = {'price'} formData = { this.state.formData.price} change = { (element => this.updateForm(element)) } 
                             />
                         <div className="form_divider">  </div>
-                            <FormField id = {'wood'} formData = { this.state.formdata.wood} change = { (element => this.updateForm(element)) } 
+                            <FormField id = {'brand'} formData = { this.state.formData.brand} change = { (element => this.updateForm(element)) } 
                             />
-                            <FormField id = {'frets'} formData = { this.state.formdata.frets} change = { (element => this.updateForm(element)) } 
+                            <FormField id = {'shipping'} formData = { this.state.formData.shipping} change = { (element => this.updateForm(element)) } 
+                            />
+                            <FormField id = {'available'} formData = { this.state.formData.available} change = { (element => this.updateForm(element)) } 
                             />
                         <div className="form_divider">  </div>
-                            <FormField id = {'publish'} formData = { this.state.formdata.publish} change = { (element => this.updateForm(element)) } 
+                            <FormField id = {'wood'} formData = { this.state.formData.wood} change = { (element => this.updateForm(element)) } 
+                            />
+                            <FormField id = {'frets'} formData = { this.state.formData.frets} change = { (element => this.updateForm(element)) } 
+                            />
+                        <div className="form_divider">  </div>
+                            <FormField id = {'publish'} formData = { this.state.formData.publish} change = { (element => this.updateForm(element)) } 
                             />
                             {this.state.formSuccess ?
                                 <div className="form_success">
