@@ -3,8 +3,11 @@ import UserLayout from '../../../hoc/userLayout';
 
 import FormField from '../../Utils/Form/formField';
 import { update, generateData, isFormValid, populateOptionFields, resetFields } from '../../Utils/Form/formActions';
+
+
 import { connect } from 'react-redux';
 import {getBrands, getWoods, addProduct, clearProduct} from '../../../redux/actions/product_actions';
+import FileUpload from '../../Utils/Form/fileUpload';
 
 
 class AddProduct extends Component {
@@ -173,6 +176,16 @@ class AddProduct extends Component {
                 touched: false,
                 validationMessage:'',
                 showlabel: true
+            },
+            images : {
+                value : [],
+                validation : {
+                    required: false
+                },
+                valid: true,
+                touched: false,
+                validationMessage:'',
+                showlabel: false
             }
         }
     }
@@ -248,12 +261,26 @@ class AddProduct extends Component {
 
     }
 
+    imagesHandler = (images) => {
+        const newFormData = {
+            ...this.state.formData
+        }
+        newFormData['images'].value = images;
+        newFormData['images'].valid = true;
+
+        this.setState({
+            formData : newFormData
+        })
+    }
+
     render() {
         return (
            <UserLayout>
                 <div>
                     <h1>Add product</h1>
                         <form onSubmit={(event)=> this.submitForm(event)}>
+                            <FileUpload imagesHandler = {(images) => this.imagesHandler(images)} reset = {this.state.formSuccess}
+                            />
                             <FormField id = {'name'} formData = { this.state.formData.name} change = { (element => this.updateForm(element)) } 
                             />
                             <FormField id = {'description'} formData = { this.state.formData.description} change = { (element => this.updateForm(element)) } 

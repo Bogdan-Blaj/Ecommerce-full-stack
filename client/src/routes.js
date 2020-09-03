@@ -20,7 +20,7 @@ const Routes = () => {
                     <Route path ="/register" exact component = { AuthenticationCheck(Register, false) } />
                     <Route path ="/register_login" exact component = { AuthenticationCheck(RegisterLogin, false) } />
                     <Route path ="/user/dashboard" exact component = { AuthenticationCheck(UserDashboard, true) } />
-                    <Route path ="/user/add_product" exact component = { AuthenticationCheck(AddProduct, true) } />
+                    <Route path ="/admin/add_product" exact component = { AuthenticationCheck(AddProduct, true) } />
                 </Switch>
             </Layout>
         )

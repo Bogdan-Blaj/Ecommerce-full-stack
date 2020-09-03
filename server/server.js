@@ -4,6 +4,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const formidable = require('express-formidable');
+const cloudinary = require('cloudinary');
 
 const app = express();
 const mongoose = require('mongoose');
@@ -21,6 +23,13 @@ mongoose.connect(process.env.DATABASE, {
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+
+cloudinary.config({
+    cloud_name : process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret : process.env.CLOUD_API_SECRET
+})
 
 
 //Start Listening
@@ -44,6 +53,7 @@ const { Product } = require('./models/product');
 //========================================
 const { auth } = require('./middleware/auth');
 const { admin } = require('./middleware/admin');
+const { response } = require('express');
 
 //========================================
 //                PRODUCTS
@@ -295,4 +305,20 @@ app.get('/api/users/logout', auth, (req, res) => {
             });
         }
     )
+});
+
+//check we are authenticated, admin, call formidable and then use the req and res
+// to upload we have the files, the callback and the configuration
+// we have req.file.XXX , where XXX we set it where we call this medhod in fileUpload.js and path because it's in memory
+app.post('/api/users/uploadimage', auth, admin, formidable(), (req,res) =>{
+    cloudinary.uploader.upload(req.files.file.path, (result) => {
+        console.log(result);
+        res.status(200).send({
+            public_id : result.public_id,
+            url : result.url
+        })
+    }, {
+        public_id : `${Date.now()}`,
+        resource_type : 'auto'
+    })
 })
