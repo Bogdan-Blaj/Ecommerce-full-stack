@@ -322,3 +322,12 @@ app.post('/api/users/uploadimage', auth, admin, formidable(), (req,res) =>{
         resource_type : 'auto'
     })
 })
+
+app.get('/api/users/removeimage', auth, admin, (req, res) => {
+    let public_id = req.query.public_id;
+    cloudinary.uploader.destroy(public_id, (error, result) => {
+        if(error)
+            return res.json({success : false, error});
+        res.status(200).send('ok');
+    })
+})
