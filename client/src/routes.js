@@ -9,7 +9,7 @@ import AuthenticationCheck from './hoc/auth';
 import Shop from './components/shop';
 import AddProduct from './components/User/Admin/add_products';
 import ManageCategories from './components/User/Admin/manage_categories';
-
+import ProductPage from './components/Product/index';
 
 
 const Routes = () => {
@@ -20,9 +20,11 @@ const Routes = () => {
                     <Route path ="/shop" exact component = { AuthenticationCheck(Shop, null) } />
                     <Route path ="/register" exact component = { AuthenticationCheck(Register, false) } />
                     <Route path ="/register_login" exact component = { AuthenticationCheck(RegisterLogin, false) } />
+                    <Route path ="/product_detail/:id" exact component = { AuthenticationCheck(ProductPage, null) } />
                     <Route path ="/user/dashboard" exact component = { AuthenticationCheck(UserDashboard, true) } />
                     <Route path ="/admin/add_product" exact component = { AuthenticationCheck(AddProduct, true) } />
-                    <Route path ="/admin/manage_categories" exact component = { AuthenticationCheck(ManageCategories, true) } />
+                    <Route path ="/admin/manage_categories" exact component = { AuthenticationCheck(ManageCategories, true) } /> 
+
                 </Switch>
             </Layout>
         )
