@@ -13,7 +13,11 @@ class ProductPage extends Component {
         //get id
         const id = this.props.match.params.id;
         console.log(id);
-        this.props.dispatch(getProductDetail(id));
+        this.props.dispatch(getProductDetail(id)).then(response => {
+            if(!this.props.products.prodDetail){
+                this.props.history.push('/');
+            };
+        })
     }
 
     componentWillUnmount(){

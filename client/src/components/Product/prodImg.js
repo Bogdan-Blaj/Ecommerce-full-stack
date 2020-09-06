@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import ImageLightBox from '../Utils/lightbox';
 
 class ProdImg extends Component {
     
@@ -29,6 +30,12 @@ class ProdImg extends Component {
                 imagePos: pos
             })
         }
+    }
+
+    handleLightBoxClose = () => {
+        this.setState({
+            lightbox: false
+        })
     }
 
     renderCardImage = (images) => {
@@ -67,6 +74,17 @@ class ProdImg extends Component {
                 <div className="main_thumbs">
                     { this.showThumbs(detail)}
                 </div>
+                {
+                    this.state.lightbox ?
+                        <ImageLightBox
+                            id={detail.id}
+                            images={this.state.lightboxImages}
+                            open={this.state.open}
+                            pos={this.state.imagePos}
+                            onclose={()=> this.handleLightBoxClose()}
+                        />
+                    :null
+                }
             </div>
         )
     }
