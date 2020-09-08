@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PageTop from '../Utils/page_top';
 import {getProductDetail, clearProductDetail} from '../../redux/actions/product_actions';
+import {addToCart} from '../../redux/actions/user_actions';
 
 import { connect } from 'react-redux';
 import ProdInfo from './prodInfo';
@@ -23,6 +24,11 @@ class ProductPage extends Component {
     componentWillUnmount(){
         this.props.dispatch(clearProductDetail());
     }
+
+    addToCartHandler(id){
+        this.props.dispatch(addToCart(id));
+    }
+
     render() {
         return (
             <div>

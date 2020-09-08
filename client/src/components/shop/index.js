@@ -100,7 +100,6 @@ class Shop extends Component {
 
     render() {
         const products = this.props.products;
-        console.log(this.state.filters);
         return (
             <div>
                 <PageTop

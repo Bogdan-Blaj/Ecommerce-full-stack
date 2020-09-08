@@ -331,3 +331,45 @@ app.get('/api/users/removeimage', auth, admin, (req, res) => {
         res.status(200).send('ok');
     })
 })
+
+app.post('/api/users/addToCart', auth, (req, res) => {
+
+    User.findOne({_id: req.user._id}, (err, doc) => {
+        //check if the product is in the cart already
+        let duplicate = false;
+        doc.cart.forEach((item) => {
+            if(item.id == req.query.productId){
+                duplicate = true;
+            }
+        })
+        if(duplicate){
+            //find by user id and cart item id the product, then increment the value
+            User.findOneAndUpdate(
+                {_id: req.user._id, "cart.id" : mongoose.Types.ObjectId(req.query.productId)},
+                {$inc : {"cart.$.quantity" : 1} },
+                {new : true},//returns all the item 
+                () => {
+                    if(err)
+                    return res.json({success : false , err});
+                    res.status(200).json(doc.cart);
+                }
+            )
+        } else {
+            // product not in cart
+            User.findOneAndUpdate(
+                {_id : req.user._id},
+                { $push: { cart : {
+                    id: mongoose.Types.ObjectId(req.query.productId),
+                    quantity: 1,
+                    date : Date.now()
+                } }},
+                { new : true},
+                (err, doc) => {
+                    if(err)
+                        return res.json({success : false , err});
+                    res.status(200).json(doc.cart);
+                }
+            )
+        }
+    })
+})

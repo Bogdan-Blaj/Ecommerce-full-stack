@@ -1,5 +1,8 @@
-import React, { Component } from 'react'
-import MyButton from './button'
+import React, { Component } from 'react';
+import MyButton from './button';
+import { connect } from 'react-redux';
+import{ addToCart } from '../../redux/actions/user_actions';
+
 
 class Card extends Component {
 
@@ -52,8 +55,11 @@ class Card extends Component {
                         <MyButton
                             type="bag_link"
                             runAction={()=>{
-                                 
-                                    console.log('added to card')
+                                  //check user is authenticated
+                                  props.user.userData.isAuth ?
+                                        this.props.dispatch(addToCart(props._id))
+                                  :
+                                  console.log('you need to log in');
                             }}
                         />
                     </div>
@@ -64,4 +70,11 @@ class Card extends Component {
     }
 }
 
-export default Card;
+// We need to check if user is authenticated
+const mapStateToProps = (state) => {
+    return {
+        user : state.user
+    }
+}
+
+export default connect(mapStateToProps)(Card);
