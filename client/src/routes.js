@@ -10,6 +10,7 @@ import Shop from './components/shop';
 import AddProduct from './components/User/Admin/add_products';
 import ManageCategories from './components/User/Admin/manage_categories';
 import ProductPage from './components/Product/index';
+import UserCart from './components/User/cart';
 
 
 const Routes = () => {
@@ -22,6 +23,7 @@ const Routes = () => {
                     <Route path ="/register_login" exact component = { AuthenticationCheck(RegisterLogin, false) } />
                     <Route path ="/product_detail/:id" exact component = { AuthenticationCheck(ProductPage, null) } />
                     <Route path ="/user/dashboard" exact component = { AuthenticationCheck(UserDashboard, true) } />
+                    <Route path ="/user/cart" exact component = { AuthenticationCheck(UserCart, true) } />
                     <Route path ="/admin/add_product" exact component = { AuthenticationCheck(AddProduct, true) } />
                     <Route path ="/admin/manage_categories" exact component = { AuthenticationCheck(ManageCategories, true) } /> 
 

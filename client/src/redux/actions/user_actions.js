@@ -4,10 +4,11 @@ import {
     REGISTER_USER, 
     AUTH_USER, 
     LOGOUT_USER,
-    ADD_TO_CART_USER
+    ADD_TO_CART_USER,
+    GET_CART_ITEMS_USER
 } from './types';
 
-import {USER_SERVER} from '../../components/Utils/misc';
+import {USER_SERVER, PRODUCT_SERVER} from '../../components/Utils/misc';
 
 export function loginUser(dataToSubmit){
     const request = axios.post(`${USER_SERVER}/login`, dataToSubmit)
@@ -54,6 +55,27 @@ export function addToCart(_id){
                 .then(response => response.data)
     return{
         type : ADD_TO_CART_USER,
+        payload: request
+    }
+}
+
+export function getCartItems(cartItems, userCart){
+    //request from server all product id's from array
+    const request = axios.get(`${PRODUCT_SERVER}/articles_by_id?id=${cartItems}&type=array`)
+        .then(response =>{
+            userCart.forEach(item => {
+                response.data.forEach((newItem, index) => {
+                    //if id from frontEnd cart = id from server
+                    if(item.id === newItem._id){
+                        //add quantity field to the product for price calculation downstream
+                        response.data[index].quantity = item.quantity;
+                    }
+                })
+            })
+            return response.data;
+        })
+    return {
+        type: GET_CART_ITEMS_USER,
         payload: request
     }
 }
