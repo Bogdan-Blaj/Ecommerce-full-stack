@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const formidable = require('express-formidable');
 const cloudinary = require('cloudinary');
+const async = require('async');
 
 const app = express();
 const mongoose = require('mongoose');
@@ -46,6 +47,7 @@ const { User } = require('./models/user');
 const { Brand } = require('./models/brand');
 const { Wood } = require('./models/wood');
 const { Product } = require('./models/product');
+const { Payment } = require('./models/payment');
 
 
 //========================================
@@ -54,6 +56,7 @@ const { Product } = require('./models/product');
 const { auth } = require('./middleware/auth');
 const { admin } = require('./middleware/admin');
 const { response } = require('express');
+const { json } = require('body-parser');
 
 //========================================
 //                PRODUCTS
@@ -401,3 +404,76 @@ app.get('/api/users/removeFromCart',auth,(req,res)=>{
         }
     );
 })
+
+app.post('/api/users/successBuy', auth, (req, res) => {
+    let history = [];
+    let transactionData = {};
+
+    //user history
+    req.body.cartDetail.forEach(item => {
+        history.push({
+            dateOfPurchase : date.now(),
+            name : item.name,
+            brand: item.brand,
+            id: item._id,
+            price : item.price,
+            quantity: item.quantity,
+            paymentId: req.body.paymentData.paymentID
+        })
+    })
+
+    //payments dash
+    transactionData.user = {
+        id: req.user._id,
+        name : req.user.name,
+        lastname : req.user.lastname,
+        email : req.user.email
+    }
+    transactionData.data = req.user.paymentData;
+    transactionData.product = history;
+    
+    //
+    User.findOneAndUpdate(
+        { _id: req.user._id },
+        { $push:{ history:history }, $set:{ cart:[] } },
+        { new: true },
+        (err, user) => {
+            if(err)
+                return res.json({success : false, err});
+
+            //create new payment
+            const payment = new Payment(transactionData);
+            payment.save((err, doc) => {
+                if(err)
+                    return res.json({success : false, err});
+
+                let products = [];
+                doc.products.forEach(item => {
+                    products.push({
+                        id: item.id,
+                        quantity : item.quantity
+                    })
+                })
+                //using assync
+                async.eachSeries(products,(item,callback)=>{ 
+                    Product.update(
+                        {_id: item.id},
+                        { $inc:{
+                            "sold": item.quantity
+                        }},
+                        {new:false},
+                        callback
+                    )
+                },(err)=>{
+                    if(err) return res.json({success:false,err});
+                    sendEmail(user.email,user.name,null,"purchase",transactionData)
+                    res.status(200).json({
+                        success:true,
+                        cart: user.cart,
+                        cartDetail:[]
+                    })
+                })
+            });
+        }
+    )
+});
