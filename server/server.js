@@ -412,7 +412,7 @@ app.post('/api/users/successBuy', auth, (req, res) => {
     //user history
     req.body.cartDetail.forEach(item => {
         history.push({
-            dateOfPurchase : date.now(),
+            dateOfPurchase: Date.now(),
             name : item.name,
             brand: item.brand,
             id: item._id,
@@ -448,7 +448,7 @@ app.post('/api/users/successBuy', auth, (req, res) => {
                     return res.json({success : false, err});
 
                 let products = [];
-                doc.products.forEach(item => {
+                doc.product.forEach(item => {
                     products.push({
                         id: item.id,
                         quantity : item.quantity
@@ -456,7 +456,7 @@ app.post('/api/users/successBuy', auth, (req, res) => {
                 })
                 //using assync
                 async.eachSeries(products,(item,callback)=>{ 
-                    Product.update(
+                    Product.updateOne(
                         {_id: item.id},
                         { $inc:{
                             "sold": item.quantity
@@ -465,8 +465,9 @@ app.post('/api/users/successBuy', auth, (req, res) => {
                         callback
                     )
                 },(err)=>{
-                    if(err) return res.json({success:false,err});
-                    sendEmail(user.email,user.name,null,"purchase",transactionData)
+                    if(err) 
+                        return res.json({success:false,err});
+ 
                     res.status(200).json({
                         success:true,
                         cart: user.cart,
