@@ -429,7 +429,7 @@ app.post('/api/users/successBuy', auth, (req, res) => {
         lastname : req.user.lastname,
         email : req.user.email
     }
-    transactionData.data = req.user.paymentData;
+    transactionData.data = req.body.paymentData;
     transactionData.product = history;
     
     //
@@ -462,6 +462,7 @@ app.post('/api/users/successBuy', auth, (req, res) => {
                             "sold": item.quantity
                         }},
                         {new:false},
+                        //callback used to notify assync that process is done
                         callback
                     )
                 },(err)=>{
