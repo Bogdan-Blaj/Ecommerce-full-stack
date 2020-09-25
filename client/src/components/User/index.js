@@ -1,34 +1,50 @@
 import React from 'react';
 import UserLayout from '../../hoc/userLayout';
 import MyButton from '../Utils/button';
+import UserHistoryBlock from '../Utils/User/history_block';
 
 
 const UserDashboard = ({user}) => {
+
+    const history = user.userData.history;
+        console.log(history[0].name);
         return (
             <UserLayout>
                 <div>
-                      <div className="user_info_panel">
+                    
+                    <div className="user_nfo_panel">
                         <h1>User information</h1>
                         <div>
                             <span>{user.userData.name}</span>
                             <span>{user.userData.lastname}</span>
                             <span>{user.userData.email}</span>
                         </div>
-
-                            <MyButton type = "default" title = "Edit account info" linkTo = "/user/user_profile"
-                            />
-                      </div>
-
-                      <div className="user_info_panel">
+                        <MyButton
+                            type="default"
+                            title="Edit account info"
+                            linkTo="/user/user_profile"
+                        />
+                    </div>
+    
+                    {
+                        user.userData.history ?
+                        <div className="user_nfo_panel">
                             <h1>History purchases</h1>
                             <div className="user_product_block_wrapper">
-                                History
-                            </div>
-                      </div>
+                                <UserHistoryBlock
+                                    products={user.userData.history}
+                                />
+                            </div>            
+                        </div>
+    
+                        :null
+                    }
+                    
+                    
                 </div>
             </UserLayout>
-           
-        )
-}
-
-export default UserDashboard;
+            
+        );
+    };
+    
+    export default UserDashboard;
