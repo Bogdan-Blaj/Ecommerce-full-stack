@@ -22,20 +22,7 @@ const UserHistoryBlock = (props) => {
             ))
         :null
     )
-    console.log("inside History Block");
-    console.log();
 
-    if(props.products !== null)
-          {  
-              props.products.map((product,i)=>(
-                console.log(i),
-                console.log("product: " + product),
-                console.log("quantity: " + product.quantity),
-                console.log("name: " + product.name),
-                console.log("brand: " + product.brand.name),
-                console.log("date: " + product.dateOfPurchase)
-            ))
-        }
     return (
         
         <div className="history_blocks">
