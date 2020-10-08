@@ -7,7 +7,7 @@ import UserHistoryBlock from '../Utils/User/history_block';
 const UserDashboard = ({user}) => {
 
     const history = user.userData.history;
-        console.log(history[0].name);
+        // console.log(history[0].name);
         return (
             <UserLayout>
                 <div>

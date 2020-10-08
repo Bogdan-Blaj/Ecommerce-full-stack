@@ -48,6 +48,7 @@ const { Brand } = require('./models/brand');
 const { Wood } = require('./models/wood');
 const { Product } = require('./models/product');
 const { Payment } = require('./models/payment');
+const { Site } = require('./models/site');
 
 
 //========================================
@@ -276,7 +277,7 @@ app.post('/api/users/login', (req, res) => {
 
             //generate token
             user.generateToken((err, user) => {
-                console.log('generateToken', err, user);
+                // console.log('generateToken', err, user);
                 if(err)
                     return res.status(400).send(err);
                 
@@ -315,7 +316,7 @@ app.get('/api/users/logout', auth, (req, res) => {
 // we have req.file.XXX , where XXX we set it where we call this medhod in fileUpload.js and path because it's in memory
 app.post('/api/users/uploadimage', auth, admin, formidable(), (req,res) =>{
     cloudinary.uploader.upload(req.files.file.path, (result) => {
-        console.log(result);
+        // console.log(result);
         res.status(200).send({
             public_id : result.public_id,
             url : result.url
@@ -497,3 +498,29 @@ app.post('/api/users/update_profile',auth,(req,res)=>{
         }
     );
 });
+
+//========================================
+//                   SITE
+//========================================
+
+app.get('/api/site/site_data',(req,res)=>{
+    Site.find({},(err,site)=>{
+        if(err) return res.status(400).send(err);
+        res.status(200).send(site[0].siteInfo) //bring just the info from siteInfo
+    });
+});
+
+app.post('/api/site/site_data',auth,admin,(req,res)=>{
+    Site.findOneAndUpdate(
+        { name: 'Site'},
+        { "$set": { siteInfo: req.body }},
+        { new: true },
+        (err,doc )=>{
+            if(err) return res.json({success:false,err});
+            return res.status(200).send({
+                success: true,
+                siteInfo: doc.siteInfo
+            })
+        }
+    )
+})

@@ -86,7 +86,7 @@ userSchema.methods.generateToken = function (cb) {
     var token = jwt.sign(user._id.toHexString(),process.env.SECRET)
 
     user.token = token;
-    console.log('generateToken', user.token);
+    // console.log('generateToken', user.token);
     user.markModified('anything');
 
     User.updateOne({_id: user._id}, { $set: { token: token } }, function(err){
