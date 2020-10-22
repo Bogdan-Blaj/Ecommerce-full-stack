@@ -24,6 +24,7 @@ mongoose.connect(process.env.DATABASE, {
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(express.static('client/build'))
 
 
 cloudinary.config({
@@ -524,3 +525,12 @@ app.post('/api/site/site_data',auth,admin,(req,res)=>{
         }
     )
 })
+
+
+//DEFAULT
+if(process.env.NODE_ENV === 'production'){
+    const path = require('path');
+    app.get('/*',(req,res)=>{
+        res.sendfile(path.resolve(__dirname,'../client', 'build', 'index.html'))
+    })
+}
